@@ -13,7 +13,8 @@ version = "0.0.1"
 application {
     mainClass.set("manpreet.ApplicationKt")
 
-    val isDevelopment: Boolean = project.ext.has("development")
+//    val isDevelopment: Boolean = project.ext.has("development")
+    val isDevelopment: Boolean = true
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
@@ -27,8 +28,10 @@ dependencies {
     implementation("io.ktor:ktor-server-host-common-jvm")
     implementation("io.ktor:ktor-server-csrf-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
-    implementation("com.squareup.okhttp:okhttp:2.7.5")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation("io.ktor:ktor-client-core")
+    implementation("io.ktor:ktor-client-cio")
+    implementation("io.ktor:ktor-serialization-kotlinx-json")
+    implementation("io.ktor:ktor-client-content-negotiation")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
