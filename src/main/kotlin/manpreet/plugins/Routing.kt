@@ -6,12 +6,11 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import manpreet.UserSession
-import manpreet.spotify.clientId
+import manpreet.clientId
+import manpreet.redirectUri
 import manpreet.spotify.spotifyCallback
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-
-val redirectUri = "http://localhost:3000/api/callback"
 fun Application.configureRouting() {
     routing {
         spotifyCallback()
@@ -21,7 +20,7 @@ fun Application.configureRouting() {
                 "response_type" to "code",
                 "client_id" to clientId,
                 "scope" to "user-read-email user-top-read",
-                "redirect_uri" to redirectUri,
+                "redirect_uri" to "$redirectUri/api/callback",
             ).joinToString("&") { (key, value) ->
                 "${URLEncoder.encode(key, StandardCharsets.UTF_8)}=${URLEncoder.encode(value, StandardCharsets.UTF_8)}"
             }
@@ -29,7 +28,7 @@ fun Application.configureRouting() {
         }
 
         // Static plugin. Try to access `/static/index.html`
-        staticResources("/static", "static")
+        staticResources("/", "static")
     }
 
 }

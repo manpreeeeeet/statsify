@@ -10,8 +10,14 @@ import io.ktor.server.sessions.*
 import kotlinx.serialization.Serializable
 import manpreet.plugins.*
 
+
+val clientId = System.getenv("SPOTIFY_CLIENT_ID") ?: throw Error("Missing ENV variable: SPOTIFY_CLIENT_ID")
+val clientSecret = System.getenv("SPOTIFY_CLIENT_SECRET") ?: throw Error("Missing ENV variable: SPOTIFY_CLIENT_SECRET")
+val redirectUri = System.getenv("REDIRECT_URI") ?: throw Error("Missing ENV variable: REDIRECT_URI")
+val serverPort = System.getenv("SERVER_PORT")?.toInt() ?: throw Error("Missing ENV variable: SERVER_PORT")
+
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+    embeddedServer(Netty, port = serverPort, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
 

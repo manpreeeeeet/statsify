@@ -1,0 +1,74 @@
+name: Build the Jar File
+run-name: ${{ github.actor }} triggered a jar build
+on: [ push ]
+env:
+  IMAGE_NAME: statisfy
+jobs:
+  build-jar-file:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'oracle'
+          java-version: '17'
+          cache: 'gradle'
+          cache-dependency-path: |
+            **/.gradle*
+            **/gradle-wrapper.properties
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install and Build Frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
+          cp dist/ ../src/main/kotlin/resources/static/
+          cd ..
+
+      - run:
+          ./gradlew build
+      - name: upload the jar file
+        uses: actions/upload-artifact@v4
+        with:
+          name: statsify-jar
+          path: build/libs/fat.jar
+          overwrite: true
+  push-to-docker:
+    needs: [ build-jar-file ]
+    runs-on: ubuntu-22.04
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: download the jar file
+        uses: actions/download-artifact@v4
+        with:
+          name: statsify-jar
+          path: build/libs/
+      - name: echo files
+        run: ls -lh build/libs/
+
+      - name: Build image
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME
+
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        #
+      - name: Push image
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+
+          # This changes all uppercase characters to lowercase.
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          docker tag $IMAGE_NAME $IMAGE_ID
+          docker push $IMAGE_ID
+

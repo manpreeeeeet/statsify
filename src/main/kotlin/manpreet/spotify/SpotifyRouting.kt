@@ -1,7 +1,6 @@
 package manpreet.spotify
 
 import SpotifyAccessToken
-import SpotifyArtist
 import SpotifyTopArtists
 import SpotifyTopTracks
 import io.ktor.client.*
@@ -14,18 +13,16 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import manpreet.UserSession
-import manpreet.plugins.redirectUri
+import manpreet.clientId
+import manpreet.clientSecret
+import manpreet.redirectUri
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-
-val clientId = "64bc2660bd464860a2dc36e3ac454383"
-val clientSecret = System.getenv("SPOTIFY_CLIENT_SECRET") ?: throw Error("missing env property client secret")
 
 val client = HttpClient(CIO) {
     install(ContentNegotiation) {
@@ -41,7 +38,7 @@ fun Route.spotifyCallback() {
         val code = call.request.queryParameters["code"] ?: ""
         val requestBody = listOf(
             "code" to code,
-            "redirect_uri" to redirectUri,
+            "redirect_uri" to "$redirectUri/api/callback",
             "grant_type" to "authorization_code"
         ).joinToString("&") { (key, value) ->
             "${URLEncoder.encode(key, StandardCharsets.UTF_8)}=${URLEncoder.encode(value, StandardCharsets.UTF_8)}"
@@ -59,12 +56,7 @@ fun Route.spotifyCallback() {
 
         val accessToken: SpotifyAccessToken = response.body()
         call.sessions.set(UserSession(accessToken))
-        val topTracks = client.get("https://api.spotify.com/v1/me/top/tracks") {
-            headers {
-                append(HttpHeaders.Authorization, "Bearer ${accessToken.accessToken}")
-            }
-        }
-        call.respondRedirect("http://localhost:3000")
+        call.respondRedirect(redirectUri)
     }
 
     get("/api/top-medium-term") {

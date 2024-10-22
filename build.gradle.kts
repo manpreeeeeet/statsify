@@ -12,10 +12,12 @@ version = "0.0.1"
 
 application {
     mainClass.set("manpreet.ApplicationKt")
+}
 
-//    val isDevelopment: Boolean = project.ext.has("development")
-    val isDevelopment: Boolean = true
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+ktor {
+    fatJar {
+        archiveFileName.set("fat.jar")
+    }
 }
 
 repositories {
