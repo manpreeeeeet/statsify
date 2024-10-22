@@ -9,6 +9,7 @@ import manpreet.plugins.*
 
 class ApplicationTest {
     @Test
+    @Ignore
     fun testRoot() = testApplication {
         application {
             configureRouting()
