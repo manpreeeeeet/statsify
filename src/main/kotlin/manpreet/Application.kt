@@ -1,12 +1,14 @@
 package manpreet
 
+import SpotifyAccessToken
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.sessions.*
 import kotlinx.serialization.Serializable
 import manpreet.plugins.*
-import manpreet.spotify.SpotifyAccessToken
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
@@ -22,5 +24,8 @@ fun Application.module() {
     install(Sessions) {
         cookie<UserSession>("user_session", SessionStorageMemory()) {
         }
+    }
+    install(ContentNegotiation) {
+        json()
     }
 }

@@ -1,5 +1,9 @@
 package manpreet.spotify
 
+import SpotifyAccessToken
+import SpotifyArtist
+import SpotifyTopArtists
+import SpotifyTopTracks
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -12,6 +16,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import manpreet.UserSession
 import manpreet.plugins.redirectUri
 import java.net.URLEncoder
@@ -21,17 +26,17 @@ import java.util.*
 
 val clientId = "64bc2660bd464860a2dc36e3ac454383"
 val clientSecret = System.getenv("SPOTIFY_CLIENT_SECRET") ?: throw Error("missing env property client secret")
-@Serializable
-data class SpotifyAccessToken(
-    @SerialName("access_token") val accessToken: String,
-    @SerialName("token_type") val tokenType: String,
-    val scope: String,
-    @SerialName("expires_in") val expiresIn: Int,
-    @SerialName("refresh_token") val refreshToken: String
-)
+
+val client = HttpClient(CIO) {
+    install(ContentNegotiation) {
+        json(Json {
+            ignoreUnknownKeys = true
+        })
+    }
+}
 
 fun Route.spotifyCallback() {
-    get("/callback") {
+    get("/api/callback") {
         val credentials = Base64.getEncoder().encodeToString("$clientId:$clientSecret".toByteArray())
         val code = call.request.queryParameters["code"] ?: ""
         val requestBody = listOf(
@@ -42,11 +47,7 @@ fun Route.spotifyCallback() {
             "${URLEncoder.encode(key, StandardCharsets.UTF_8)}=${URLEncoder.encode(value, StandardCharsets.UTF_8)}"
         }
 
-        val client = HttpClient(CIO) {
-            install(ContentNegotiation) {
-                json()
-            }
-        }
+
         val response = client.post("https://accounts.spotify.com/api/token") {
             headers {
                 append(HttpHeaders.Authorization, "Basic $credentials")
@@ -63,6 +64,37 @@ fun Route.spotifyCallback() {
                 append(HttpHeaders.Authorization, "Bearer ${accessToken.accessToken}")
             }
         }
-        call.respondText("callback successful")
+        call.respondRedirect("http://localhost:3000")
+    }
+
+    get("/api/top-medium-term") {
+        val userSession = call.sessions.get<UserSession>()
+        if (userSession == null) {
+            call.respond(HttpStatusCode.Forbidden)
+            return@get
+        }
+
+
+        val accessToken = userSession.spotifyAccessToken
+        val topTracks: SpotifyTopTracks = client.get("https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=5") {
+            headers {
+                append(HttpHeaders.Authorization, "Bearer ${accessToken.accessToken}")
+            }
+        }.body()
+
+        val topArtists: SpotifyTopArtists =
+            client.get("https://api.spotify.com/v1/me/top/artists?time_range=medium_term&limit=5") {
+                headers {
+                    append(HttpHeaders.Authorization, "Bearer ${accessToken.accessToken}")
+                }
+            }.body()
+
+        call.respond(SpotifyTop(topTracks, topArtists))
     }
 }
+
+@Serializable
+data class SpotifyTop(
+    val topTracks: SpotifyTopTracks,
+    val topArtists: SpotifyTopArtists
+)

@@ -6,9 +6,12 @@ export function Login() {
       <p className="text-lg">
         Check your top artists, songs and other fun stats.
       </p>
-      <button className="bg-primary shadow-lg shadow-primary text-background text-lg py-4 px-10 rounded-sm w-fit mt-4 mb-4">
+      <a
+        className="bg-primary shadow-lg shadow-primary text-background text-lg py-4 px-10 rounded-sm w-fit mt-4 mb-4"
+        href="/api/login"
+      >
         Login with spotify
-      </button>
+      </a>
     </div>
   );
 }

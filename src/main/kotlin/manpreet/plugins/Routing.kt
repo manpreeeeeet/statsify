@@ -11,17 +11,12 @@ import manpreet.spotify.spotifyCallback
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-val redirectUri = "http://localhost:8080/callback"
+val redirectUri = "http://localhost:3000/api/callback"
 fun Application.configureRouting() {
     routing {
         spotifyCallback()
-        get("/") {
-            val a = call.sessions.get<UserSession>()
-            val b = a
-            call.respondText("Hello World!")
-        }
 
-        get("/login") {
+        get("/api/login") {
             val queryString = listOf(
                 "response_type" to "code",
                 "client_id" to clientId,

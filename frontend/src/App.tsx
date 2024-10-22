@@ -1,10 +1,39 @@
 import Apol from "./assets/apol.svg";
-import { useState } from "react";
-import { TopArtists } from "@/components/TopArtists.tsx";
+import { useContext, useState } from "react";
+import { TopItems } from "@/components/TopItems.tsx";
 import { Login } from "@/components/Login.tsx";
+import { LoginContext } from "@/LoginContext.tsx";
+import { useQuery } from "@tanstack/react-query";
+import { getTopMediumTerm, ITopItems } from "@/api/Api.ts";
+import { AxiosError, HttpStatusCode } from "axios";
 
 function App() {
   const [activeNavIndex, setActiveNavIndex] = useState(0);
+  const { isLoggedIn, setIsLoggedIn } = useContext(LoginContext);
+
+  const {
+    data: topItems,
+    isSuccess,
+    isError,
+    isLoading,
+    refetch,
+    error,
+  } = useQuery<ITopItems, AxiosError>({
+    queryFn: getTopMediumTerm,
+    queryKey: ["GetAllServices"],
+  });
+
+  if (isSuccess) {
+    setIsLoggedIn(true);
+  }
+
+  if (
+    error &&
+    error.code &&
+    Number(error.code) === HttpStatusCode.Unauthorized
+  ) {
+    setIsLoggedIn(false);
+  }
 
   return (
     <div className="max-w-screen-md mx-auto p-4">
@@ -30,8 +59,8 @@ function App() {
         </div>
       </div>
       <hr className="border-t-3 border-accent my-2" />
-      {/*<TopArtists />*/}
-      <Login />
+      {isLoggedIn && <TopItems items={topItems} />}
+      {!isLoggedIn && <Login />}
     </div>
   );
 }
