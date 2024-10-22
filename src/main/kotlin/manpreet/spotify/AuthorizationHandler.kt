@@ -9,8 +9,10 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import manpreet.UserSession
 import manpreet.plugins.redirectUri
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -55,6 +57,7 @@ fun Route.spotifyCallback() {
 
 
         val accessToken: SpotifyAccessToken = response.body()
+        call.sessions.set(UserSession(accessToken))
         val topTracks = client.get("https://api.spotify.com/v1/me/top/tracks") {
             headers {
                 append(HttpHeaders.Authorization, "Bearer ${accessToken.accessToken}")

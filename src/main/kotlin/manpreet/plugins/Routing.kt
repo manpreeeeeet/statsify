@@ -4,6 +4,8 @@ import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
+import manpreet.UserSession
 import manpreet.spotify.clientId
 import manpreet.spotify.spotifyCallback
 import java.net.URLEncoder
@@ -14,6 +16,8 @@ fun Application.configureRouting() {
     routing {
         spotifyCallback()
         get("/") {
+            val a = call.sessions.get<UserSession>()
+            val b = a
             call.respondText("Hello World!")
         }
 
