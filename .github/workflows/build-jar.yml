@@ -27,7 +27,7 @@ jobs:
           cd frontend
           npm install
           npm run build
-          cp dist/ ../src/main/kotlin/resources/static/
+          cp -r dist/ ../src/main/kotlin/resources/static/
           cd ..
 
       - run:
