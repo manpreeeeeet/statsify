@@ -1,4 +1,4 @@
-import Apol from "./assets/apol.svg";
+import Frog from "./assets/frog_blanket.svg";
 import { useContext, useState } from "react";
 import { TopItems } from "@/components/TopItems.tsx";
 import { Login } from "@/components/Login.tsx";
@@ -38,7 +38,7 @@ function App() {
   return (
     <div className="max-w-screen-md mx-auto p-4">
       <div className="flex lg:gap-10 items-end p-1 gap-4">
-        <img src={Apol} alt="" className="w-[40px]" />
+        <img src={Frog} alt="" className="w-[40px] lg:-mr-6 -mr-2" />
         <div
           className={`decoration-secondary decoration-wavy text-xl hover:text-secondary-foreground transition-colors duration-200 cursor-pointer ${activeNavIndex == 0 && "underline"}`}
           onClick={() => setActiveNavIndex(0)}

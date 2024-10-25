@@ -1,8 +1,8 @@
-import Apol from "../assets/apol.svg";
+import Frog from "../assets/frog.svg";
 export function Login() {
   return (
     <div className="mx-auto flex flex-col mt-4 items-center border-accent border-2 p-4 rounded-sm text-center">
-      <img src={Apol} alt="" className="h-80" />
+      <img src={Frog} alt="" className="h-80" />
       <p className="text-lg">
         Check your top artists, songs and other fun stats.
       </p>
