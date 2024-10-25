@@ -1,17 +1,13 @@
 <!doctype html>
-<html lang="en" class="">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <!-- Global Metadata -->
+<html lang="en">
+  <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/src/favicon.svg"/>
-    <link rel="icon" type="image/png" href="/src/favicon.svg" sizes="32x32"/>
-    <link rel="icon" type="image/png" href="/src/favicon.svg" sizes="16x16"/>
-    <link rel="apple-touch-icon" type="image/png" href="/src/favicon.svg" sizes="180x180"/>
+      <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.svg"/>
+    <link rel="icon" type="image/png" href="/favicon.svg"/>
+    <link rel="apple-touch-icon" type="image/png" href="/favicon.svg"/>
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://statsify.me/"/>
@@ -26,22 +22,15 @@
     <meta property="og:url" content={Astro.url}/>
     <meta property="og:title" content=Statsify/>
     <meta property="og:description" content="Check your spotify top artists, songs and other fun stats."/>
-    <meta property="og:image" content="previewImage"/>
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image"/>
     <meta property="twitter:title" content=Statsify/>
     <meta property="twitter:description" content="Check your spotify top artists, songs and other fun stats."/>
-    <link rel="icon" type="image/svg+xml" href="src/favicon.svg"/>
-
-    <script type="module">
-        import previewImage from '/src/assets/preview.png';
-        document.getElementById('dynamic-meta-image').setAttribute('content', previewImage);
-    </script>
-
-</head>
-<body class="font-sans">
-<div id="root"></div>
-<script type="module" src="/src/main.tsx"></script>
-</body>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
